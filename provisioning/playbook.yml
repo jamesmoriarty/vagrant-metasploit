@@ -31,7 +31,8 @@
       - libpcap-dev
 
   tasks:
-    - apt: name={{ item }} state=present
+    - name: install package dependencies
+      apt: name={{ item }} state=present
       sudo: yes
       with_items: packages
 
@@ -41,6 +42,8 @@
     - name: install ruby
       shell: ~/.rvm/bin/rvm install --default {{ ruby }} creates=~/.rvm/rubies/{{ ruby }}
 
-    - git: repo=https://github.com/rapid7/metasploit-framework.git dest=~/metasploit-framework depth=1 update=no
+    - name: checkout code
+      git: repo=https://github.com/rapid7/metasploit-framework.git dest=~/metasploit-framework depth=1 update=no
 
-    - shell: chdir=~/metasploit-framework bash -lc "bundle"
+    - name: install bundle
+      shell: chdir=~/metasploit-framework bash -lc "bundle"
