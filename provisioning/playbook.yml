@@ -1,0 +1,46 @@
+---
+- hosts: all
+  vars:
+    ruby: 1.9.3
+    packages:
+      - build-essential
+      - zlib1g
+      - zlib1g-dev
+      - libxml2
+      - libxml2-dev
+      - libxslt-dev
+      - locate
+      - libreadline6-dev
+      - libcurl4-openssl-dev
+      - git-core
+      - libssl-dev
+      - libyaml-dev
+      - openssl
+      - autoconf
+      - libtool
+      - ncurses-dev
+      - bison
+      - curl
+      - wget
+      - postgresql
+      - postgresql-contrib
+      - libpq-dev
+      - libapr1
+      - libaprutil1
+      - libsvn1
+      - libpcap-dev
+
+  tasks:
+    - apt: name={{ item }} state=present
+      sudo: yes
+      with_items: packages
+
+    - name: install rvm
+      shell: \curl -L https://get.rvm.io | bash -s stable --autolibs=enabled creates=~/.rvm
+
+    - name: install ruby
+      shell: ~/.rvm/bin/rvm install --default {{ ruby }} creates=~/.rvm/rubies/{{ ruby }}
+
+    - git: repo=https://github.com/rapid7/metasploit-framework.git dest=~/metasploit-framework depth=1 update=no
+
+    - shell: chdir=~/metasploit-framework bash -lc "bundle"
